@@ -9,6 +9,7 @@ node_modules/
 .env
 .vscode/
 DS_Store
+.DS_Store
 ios/
 /screenshots
 .github
