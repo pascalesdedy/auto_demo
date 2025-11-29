@@ -1,91 +1,139 @@
-# auto_demo
+# Playwright Automation Testing Project
 
-Lightweight Playwright end-to-end test project using a small Page Object Model.
+This project contains automated tests for web applications using Playwright, a powerful end-to-end testing framework.
 
-## Overview
+## 🚀 Features
 
-- Purpose: automated UI tests for example flows using `@playwright/test`.
-- Test files: `tests/` (e.g. `tests/login.spec.ts`).
-- Page objects: `lib/pages/*` (each page class accepts a Playwright `Page` and exposes `Locator` fields).
+- End-to-end testing with Playwright
+- Page Object Model (POM) design pattern
+- Support for multiple test scenarios including:
+  - Home page tests
+  - Login functionality
+  - Signup process
+  - Product page interactions
+- Data generation using Faker.js
+- Environment configuration with dotenv
 
-## Quick start
+## 📋 Prerequisites
 
-1. Install dependencies:
+- Node.js (v16 or higher)
+- npm (comes with Node.js)
+- Playwright browsers (will be installed automatically)
 
-```bash
-npm install
+## 🛠️ Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd auto_demo
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Install Playwright browsers:
+   ```bash
+   npx playwright install
+   ```
+
+## 🏗️ Project Structure
+
+```
+.
+├── lib/
+│   └── pages/           # Page Object Models
+│       ├── base_page.ts # Base page with common functionality
+│       ├── home_page.ts
+│       ├── login_page.ts
+│       ├── product_page.ts
+│       └── signup_page.ts
+├── tests/               # Test files
+│   ├── home.spec.ts
+│   ├── login.spec.ts
+│   ├── product_page.spec.ts
+│   └── signup.spec.ts
+├── .env                 # Environment variables (create this file)
+├── .gitignore
+├── package.json
+└── README.md
 ```
 
-2. Set the application base URL (used by `playwright.config.ts`):
+## 🧪 Sample Test Scenario: Login Test
 
-```bash
-# zsh
-export BASE_URL=https://example.com
-# or create a .env file with BASE_URL=https://example.com
+Here's an example of a login test scenario that verifies different login behaviors:
+
+```typescript
+// tests/login.spec.ts
+import { test, expect } from '@playwright/test';
+import { LoginPage } from '../lib/pages/login_page';
+
+let loginPage: LoginPage;
+
+test.beforeEach(async({ page }) => {
+    loginPage = new LoginPage(page);
+    await loginPage.navigateTo('/login');
+});
+
+test('Login page has correct title', async ({ page }) => {
+    await expect(page).toHaveTitle('Automation Exercise - Signup / Login');
+});
+
+test('Verify login with valid credentials', async () => {
+    await loginPage.inputLoginEmail.fill(process.env.EMAIL_LOGIN!);
+    await loginPage.inputLoginPassword.fill(process.env.PASSWORD_LOGIN!);
+    await loginPage.loginButton.click();
+    await expect(loginPage.logoutButton).toBeVisible();
+});
+
+test('Verify login with invalid email format', async () => {
+    await loginPage.inputLoginEmail.fill('invalidemailformat');
+    await loginPage.inputLoginPassword.fill('somepassword');
+    await loginPage.loginButton.click();
+    const validation = await loginPage.inputLoginEmail.evaluate(
+        el => (el as HTMLInputElement).validationMessage
+    );
+    await expect(validation).toContain('@');
+});
+
+test('Verify login with invalid credentials', async () => {
+    await loginPage.inputLoginEmail.fill('nonexistent@example.com');
+    await loginPage.inputLoginPassword.fill('wrongpassword');
+    await loginPage.loginButton.click();
+    await expect(loginPage.errorLoginMessage).toBeVisible();
+});
 ```
 
-3. Run the test suite:
+## 🚦 Running Tests
 
+Run all tests:
 ```bash
 npx playwright test
 ```
 
-4. Run a single spec file:
-
+Run a specific test file:
 ```bash
 npx playwright test tests/login.spec.ts
 ```
 
-5. Open the HTML report produced by Playwright:
+Run tests in headed mode (to see the browser):
+```bash
+npx playwright test --headed
+```
 
+Run tests in debug mode:
+```bash
+npx playwright test --debug
+```
+
+## 📊 Test Reports
+
+After running tests, you can view the HTML report with:
 ```bash
 npx playwright show-report
 ```
 
-## Project structure
+## 📄 License
 
-- `playwright.config.ts` — Playwright Test configuration. Important notes:
-	- Reads `process.env.BASE_URL` and imports `dotenv/config`.
-	- Reporter: `html` (use `npx playwright show-report`).
-	- Trace: `on-first-retry` for debugging flaky tests.
-- `tests/` — test specs using Playwright test fixtures (see `tests/login.spec.ts`).
-- `lib/pages/` — Page Object Model. Example classes:
-	- `base_page.ts` — common helpers (`navigateTo`, `waitForTimeout`, `takeScreenshot`).
-	- `login_page.ts` — example of locator initialization:
-
-```ts
-this.textSignupName = loginPage.locator('input[data-qa="signup-name"]');
-```
-
-## Conventions & patterns
-
-- Page objects accept a Playwright `Page` in the constructor and store `Locator` fields as public properties so tests can assert directly or call page methods.
-- Prefer selecting elements by `data-qa` when available (see `lib/pages/login_page.ts`).
-- Add helper methods to page classes instead of spreading selectors in tests. Use `BasePage.takeScreenshot(testTitle)` to save screenshots to `screenshots/${testTitle}.jpg`.
-
-
-- If tests can't reach the app, ensure `BASE_URL` is set and reachable.
-- For flaky tests: rerun with `--retries` (configured via CI), inspect Playwright traces and the HTML report.
-
-## Examples
-
-- Create and use a page object in a test (from `tests/login.spec.ts`):
-
-```ts
-let loginPage: LoginPage;
-test.beforeEach(async ({ page }) => {
-	loginPage = new LoginPage(page);
-	await loginPage.navigateTo('/login');
-});
-
-test('Login page has title', async ({ page }) => {
-	await expect(page).toHaveTitle('Automation Exercise - Signup / Login');
-});
-```
-
-## Development notes
-
-- Node assumes `type: "commonjs"` per `package.json` — keep imports and exports consistent with the repo's TypeScript configuration.
-- This repo includes `@faker-js/faker` as a dependency — use it for synthetic test data when needed.
-
----
+This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
