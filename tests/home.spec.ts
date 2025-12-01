@@ -9,7 +9,7 @@ test.describe('Test Home Page for non Logged User',() =>{
         await homePage.navigateTo('/');
     });
 
-    test('Home page has title ', async ({ page }) => {
+    test('Home page has title Automation Exercise', async ({ page }) => {
         await expect(page).toHaveTitle('Automation Exercise');
     });
     test('Verify home page slider is visible', async () => {

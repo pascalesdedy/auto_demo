@@ -17,6 +17,7 @@ test.describe('Test Login Page',() =>{
         await loginPage.inputLoginPassword.fill(process.env.PASSWORD_LOGIN!);
         await loginPage.loginButton.click();
         await expect(loginPage.logoutButton).toBeVisible();
+        await loginPage.logoutButton.click();
     });
     test('verify login with invalid format email', async () => {
         await loginPage.inputLoginEmail.fill('invalidemailformat');

@@ -1,0 +1,23 @@
+Test Cases:
+
+Home Page:
+1. Home page has title Automation Exercise.
+2. Verify home page slider is visible.
+3. Verify home page menu items are visible.
+
+Login:
+1. Login page has title Automation Exercise - Signup / Login.
+2. Verify login with valid credentials.
+3. Verify login with invalid format email.
+4. Verify login with invalid credentials.
+
+Product Page:
+1. Verify Products page element is visible.
+2. Verify category products filter works.
+
+SignUp Page:
+1. Verify Account Information Title is Visible.
+2. Verify all signup page Input elements are visible.
+3. Verify autofill name and email.
+4. Verify user can signup successfully then verify login works.
+5. Verify signup with existing email shows error.
